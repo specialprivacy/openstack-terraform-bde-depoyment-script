@@ -7,7 +7,7 @@ variable "bastion_flavor" {
 }
 
 variable "docker_flavor" {
-  default = "m1.medium"
+  default = "m1.large"
 }
 
 variable "ssh_key_file" {
