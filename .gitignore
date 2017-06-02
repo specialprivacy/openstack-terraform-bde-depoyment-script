@@ -2,3 +2,4 @@
 openrc.sh
 *.tfstate
 *.backup
+.terraform*
