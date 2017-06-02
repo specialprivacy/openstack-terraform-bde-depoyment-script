@@ -14,3 +14,9 @@ wget -qO - https://get.docker.com | sh -
 # setup swarm worker
 docker run -d --name swarm-agent swarm join --advertise=$address:2375 \
 	consul://${consul_address}:8500
+
+# install NFS
+apt-get install -y --no-install-recommends nfs-common
+echo "${manager_address}:/app-swarm-ui /app-swarm-ui nfs nolock 0 0" >> /etc/fstab
+mkdir /app-swarm-ui
+mount /app-swarm-ui

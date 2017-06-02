@@ -18,7 +18,8 @@ resource "openstack_networking_network_v2" "terraform" {
 resource "openstack_networking_subnet_v2" "terraform" {
   name            = "terraform"
   network_id      = "${openstack_networking_network_v2.terraform.id}"
-  cidr            = "10.0.0.0/16"
+  # NOTE: 10.0.0.0/16 is used by Docker for its overlay networks
+  cidr            = "10.1.0.0/16"
   ip_version      = 4
   dns_nameservers = ["8.8.8.8", "8.8.4.4"]
 }
@@ -62,15 +63,7 @@ resource "openstack_compute_secgroup_v2" "consul" {
     from_port   = 22
     to_port     = 22
     ip_protocol = "tcp"
-    cidr        = "10.0.0.0/24"
-  }
-
-  # internal docker access
-  rule {
-    from_port   = 2375
-    to_port     = 2375
-    ip_protocol = "tcp"
-    cidr        = "10.0.0.0/24"
+    cidr        = "${openstack_compute_instance_v2.bastion.access_ip_v4}/32"
   }
 
   # internal consul access
@@ -78,7 +71,7 @@ resource "openstack_compute_secgroup_v2" "consul" {
     from_port   = 8500
     to_port     = 8500
     ip_protocol = "tcp"
-    cidr        = "10.0.0.0/24"
+    cidr        = "10.1.0.0/16"
   }
 
   rule {
@@ -98,7 +91,7 @@ resource "openstack_compute_secgroup_v2" "manager" {
     from_port   = 22
     to_port     = 22
     ip_protocol = "tcp"
-    cidr        = "10.0.0.0/24"
+    cidr        = "${openstack_compute_instance_v2.bastion.access_ip_v4}/32"
   }
 
   # any possible application exposing on port 80
@@ -122,7 +115,7 @@ resource "openstack_compute_secgroup_v2" "manager" {
     from_port   = 2375
     to_port     = 2375
     ip_protocol = "tcp"
-    cidr        = "10.0.0.0/24"
+    cidr        = "10.1.0.0/16"
   }
 
   rule {
@@ -142,14 +135,13 @@ resource "openstack_compute_secgroup_v2" "worker" {
     from_port   = 22
     to_port     = 22
     ip_protocol = "tcp"
-    cidr        = "10.0.0.0/24"
+    cidr        = "${openstack_compute_instance_v2.bastion.access_ip_v4}/32"
   }
 
   rule {
     from_port   = 1
     to_port     = 65535
     ip_protocol = "tcp"
-    #cidr        = "10.0.0.0/16"
     self        = true
   }
 
