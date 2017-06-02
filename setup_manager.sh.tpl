@@ -10,8 +10,8 @@ ExecStart=
 ExecStart=/usr/bin/dockerd -H fd:// -H tcp://0.0.0.0:2375 --cluster-advertise=$address:2375 --cluster-store=consul://${consul_address}:8500
 EOF
 wget -qO - https://get.docker.com | sh -
-apt-get install -y --no-install-recommends docker-compose git
-
+apt-get install -y --no-install-recommends python3-pip git
+pip3 install docker-compose
 
 # setup swarm manager
 set -x
