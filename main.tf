@@ -1,8 +1,8 @@
 resource "openstack_images_image_v2" "debiantesting" {
-  name   = "Debian Testing"
+  name             = "Debian Testing"
   image_source_url = "http://cdimage.debian.org/cdimage/openstack/testing/debian-testing-openstack-amd64.qcow2"
   container_format = "bare"
-  disk_format = "qcow2"
+  disk_format      = "qcow2"
 }
 
 resource "openstack_compute_keypair_v2" "terraform" {
@@ -16,8 +16,9 @@ resource "openstack_networking_network_v2" "terraform" {
 }
 
 resource "openstack_networking_subnet_v2" "terraform" {
-  name            = "terraform"
-  network_id      = "${openstack_networking_network_v2.terraform.id}"
+  name       = "terraform"
+  network_id = "${openstack_networking_network_v2.terraform.id}"
+
   # NOTE: 10.0.0.0/16 is used by Docker for its overlay networks
   cidr            = "10.1.0.0/16"
   ip_version      = 4
@@ -219,7 +220,7 @@ resource "openstack_compute_instance_v2" "manager" {
   image_name      = "${openstack_images_image_v2.debiantesting.name}"
   flavor_name     = "${var.docker_flavor}"
   key_pair        = "${openstack_compute_keypair_v2.terraform.name}"
-  security_groups = ["${openstack_compute_secgroup_v2.manager.name}","${openstack_compute_secgroup_v2.worker.name}"]
+  security_groups = ["${openstack_compute_secgroup_v2.manager.name}", "${openstack_compute_secgroup_v2.worker.name}"]
 
   network {
     uuid = "${openstack_networking_network_v2.terraform.id}"
@@ -233,7 +234,7 @@ data "template_file" "setup_worker" {
 
   vars {
     manager_address = "${openstack_compute_instance_v2.manager.access_ip_v4}"
-    consul_address = "${openstack_compute_instance_v2.consul.access_ip_v4}"
+    consul_address  = "${openstack_compute_instance_v2.consul.access_ip_v4}"
   }
 }
 
