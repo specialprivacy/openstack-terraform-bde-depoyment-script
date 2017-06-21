@@ -2,6 +2,7 @@
 
 address=`ip route get 1 | awk '{print $NF;exit}'`
 
+apt-get update
 apt-get install -y --no-install-recommends unzip
 
 cd /tmp
